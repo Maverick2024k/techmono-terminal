@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#06080b">
+<title>TechMono - Web3 Terminal Typeface</title>
+<meta name="description" content="TechMono is a monospace typeface for DEX dashboards, wallets and developer tools. Test it live with your own wallet addresses and contract logs.">
+<link rel="preload" href="fonts/TechMono-Regular.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="fonts/TechMono-Bold.woff" as="font" type="font/woff" crossorigin>
+<style>
+/* ---------- TechMono: web font setup ----------
+   Put the /fonts folder next to this file (or adjust the url() paths). */
+@font-face{font-family:"TechMono";font-weight:300;font-style:normal;font-display:swap;
+  src:url("./fonts/TechMono-Light.woff") format("woff"),url("./fonts/TechMono-Light.ttf") format("truetype")}
+@font-face{font-family:"TechMono";font-weight:400;font-style:normal;font-display:swap;
+  src:url("./fonts/TechMono-Regular.woff") format("woff"),url("./fonts/TechMono-Regular.ttf") format("truetype")}
+@font-face{font-family:"TechMono";font-weight:400;font-style:italic;font-display:swap;
+  src:url("./fonts/TechMono-Oblique.woff") format("woff"),url("./fonts/TechMono-Oblique.ttf") format("truetype")}
+@font-face{font-family:"TechMono";font-weight:700;font-style:normal;font-display:swap;
+  src:url("./fonts/TechMono-Bold.woff") format("woff"),url("./fonts/TechMono-Bold.ttf") format("truetype")}
+
+/* ---------- Terminal tokens used by the specimen ---------- */
+:root{
+  --font-techmono:"TechMono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --term-bg:#06080b;      --term-panel:#0b0f14;  --term-line:#1b232d;
+  --term-text:#cdd6e0;    --term-muted:#7d8b9a;
+  --term-up:#2ee6a6;      --term-down:#ff5c74;   --term-warn:#ffb547;  --term-accent:#4cc9f0;
+  --term-size:13px;       --term-leading:1.55;
+}
+.font-techmono{font-family:var(--font-techmono)}
+.term{font-family:var(--font-techmono);font-size:var(--term-size);line-height:var(--term-leading);
+  color:var(--term-text);background:var(--term-bg);font-variant-numeric:tabular-nums}
+
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--term-bg);color:var(--term-text);font-family:var(--font-techmono);
+  font-size:var(--term-size);line-height:var(--term-leading);padding-bottom:92px;
+  background-image:linear-gradient(rgba(76,201,240,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(76,201,240,.035) 1px,transparent 1px);
+  background-size:32px 32px}
+a{color:var(--term-accent)}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--term-accent);outline-offset:2px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+.muted{color:var(--term-muted)}
+.up{color:var(--term-up)} .down{color:var(--term-down)} .warn{color:var(--term-warn)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* top bar */
+.top{border-bottom:1px solid var(--term-line);background:rgba(6,8,11,.85);backdrop-filter:blur(6px)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:48px;flex-wrap:nowrap;overflow:hidden}
+.brand{font-weight:700;letter-spacing:.04em;color:#fff;white-space:nowrap}
+.brand b{color:var(--term-up)}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--term-line);padding:2px 10px;border-radius:999px;color:var(--term-muted);white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--term-up);display:inline-block;animation:pulse 1.6s infinite}
+.spacer{flex:1}
+.top .sim{color:var(--term-warn);border-color:rgba(255,181,71,.35)}
+
+/* hero */
+.hero{padding:48px 0 24px}
+.hero h1{margin:0;font-size:clamp(44px,9vw,104px);line-height:1;font-weight:700;color:#fff;letter-spacing:-.02em}
+.hero h1 span{color:var(--term-up)}
+.hero p{max-width:62ch;color:var(--term-muted);margin:16px 0 24px;font-size:15px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:1px solid var(--term-line);background:var(--term-panel);
+  padding:9px 16px;border-radius:6px;text-decoration:none;color:var(--term-text);transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--term-accent)}
+.btn.primary{background:var(--term-up);border-color:var(--term-up);color:#04100b;font-weight:700}
+.btn.primary:hover{background:#5bf0bb}
+.btn.sm{padding:4px 10px;font-size:12px}
+
+/* grid + panels */
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;margin-top:16px}
+.c4{grid-column:span 4}.c5{grid-column:span 5}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+.panel{background:var(--term-panel);border:1px solid var(--term-line);border-radius:8px;min-width:0;display:flex;flex-direction:column}
+.panel>header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--term-line)}
+.panel>header h2{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#fff;font-weight:700}
+.panel>header .tag{margin-left:auto;color:var(--term-muted);font-size:12px}
+.body{padding:14px;min-width:0}
+
+/* inputs */
+.inputs{display:grid;grid-template-columns:2fr 1fr 1fr 2fr;gap:12px}
+.field label{display:block;color:var(--term-muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.field input,.field select{width:100%;background:#05070a;border:1px solid var(--term-line);border-radius:6px;padding:8px 10px;min-width:0}
+.field input:focus{border-color:var(--term-accent);outline:none;box-shadow:0 0 0 2px rgba(76,201,240,.25)}
+.field .hint{min-height:1.5em;font-size:12px;margin-top:4px}
+.field.bad input{border-color:var(--term-down)}
+
+/* order book */
+.ob-head,.ob-row{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:8px;padding:1px 14px;position:relative}
+.ob-head{color:var(--term-muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding-top:8px;padding-bottom:6px}
+.ob-row span{text-align:right;position:relative;z-index:1}
+.ob-row span:first-child{text-align:left}
+.ob-row::before{content:"";position:absolute;right:0;top:0;bottom:0;width:var(--d,0%);opacity:.16;transition:width .4s}
+.ob-row.ask::before{background:var(--term-down)} .ob-row.bid::before{background:var(--term-up)}
+.ob-row.ask span:first-child{color:var(--term-down)} .ob-row.bid span:first-child{color:var(--term-up)}
+.ob-row.fl{animation:flash .7s}
+.mid{display:flex;align-items:baseline;gap:12px;padding:8px 14px;border-block:1px solid var(--term-line);background:rgba(255,255,255,.02)}
+.mid .px{font-size:20px;font-weight:700;color:#fff}
+.tri{display:inline-block;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;margin-right:6px;vertical-align:middle}
+.tri.u{border-bottom:7px solid var(--term-up)} .tri.d{border-top:7px solid var(--term-down)}
+
+/* tx log */
+.tx-wrap{max-height:430px;overflow:auto}
+.tx{display:grid;grid-template-columns:68px 100px 1fr 100px 120px 120px;gap:10px;padding:5px 14px;border-bottom:1px solid rgba(27,35,45,.6);align-items:center}
+.tx.hd{position:sticky;top:0;background:var(--term-panel);color:var(--term-muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase;z-index:2}
+.tx.new{animation:slide .35s}
+.tx.mine{background:rgba(76,201,240,.08);box-shadow:inset 2px 0 var(--term-accent)}
+.tx .v{text-align:right}
+.st{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.08em;font-weight:700}
+.st i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+.st-pending{color:var(--term-warn)} .st-pending i{animation:pulse 1s infinite}
+.st-confirmed{color:var(--term-up)} .st-failed{color:var(--term-down)} .st-replaced{color:var(--term-muted)}
+.stats{display:flex;gap:16px;color:var(--term-muted);font-size:12px;margin-right:auto;margin-left:6px}
+
+/* gas */
+.gas-num{font-size:64px;line-height:1;font-weight:700;color:#fff;letter-spacing:-.02em}
+.gas-num small{font-size:16px;color:var(--term-muted);font-weight:400;margin-left:6px;letter-spacing:0}
+.spark{width:100%;height:72px;display:block;margin:12px 0}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px}
+.kv dt{color:var(--term-muted)} .kv dd{margin:0;text-align:right}
+.lvl{display:inline-block;border:1px solid currentColor;padding:0 8px;border-radius:4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+
+/* code inspector */
+.tabs{display:flex;gap:4px;margin-left:8px;flex-wrap:wrap}
+.tab{background:none;border:1px solid transparent;border-radius:4px;padding:2px 10px;cursor:pointer;color:var(--term-muted)}
+.tab[aria-selected="true"]{border-color:var(--term-line);background:#05070a;color:#fff}
+.editor{position:relative;display:flex;height:340px;background:#05070a;overflow:hidden}
+.gutter{width:44px;flex:none;text-align:right;padding:12px 8px 12px 0;color:#41505f;border-right:1px solid var(--term-line);overflow:hidden;white-space:pre;user-select:none;line-height:20px}
+.code-area{position:relative;flex:1;min-width:0}
+.code-area pre,.code-area textarea{position:absolute;inset:0;margin:0;padding:12px;border:0;line-height:20px;font:inherit;line-height:20px;white-space:pre;overflow:auto;tab-size:2;letter-spacing:0}
+.code-area pre{pointer-events:none;color:var(--term-text)}
+.code-area textarea{background:transparent;color:transparent;caret-color:#fff;resize:none;outline:none;-webkit-text-fill-color:transparent}
+.code-area textarea::selection{background:rgba(76,201,240,.35);-webkit-text-fill-color:transparent}
+.t-kw{color:#c792ea}.t-str{color:#a5e075}.t-num{color:#ffb547}.t-com{color:#5c6b7a;font-style:italic}.t-hex{color:var(--term-accent)}
+.statusbar{display:flex;flex-wrap:wrap;gap:6px 18px;padding:8px 14px;border-top:1px solid var(--term-line);color:var(--term-muted);font-size:12px}
+.statusbar .tok{color:var(--term-text)}
+
+/* tester + specimen */
+.weights{display:grid;gap:10px}
+.wrow{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:baseline;border-bottom:1px solid rgba(27,35,45,.6);padding-bottom:8px}
+.wrow .lbl{color:var(--term-muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.wrow .smp{overflow-wrap:anywhere;color:#fff;line-height:1.25}
+.balance{margin-top:16px;border:1px dashed var(--term-line);border-radius:8px;padding:12px 14px;display:grid;gap:2px}
+.balance .big{font-size:26px;font-weight:700;color:#fff}
+input[type=range]{accent-color:var(--term-up);width:100%}
+.glyphs{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:4px;font-size:18px}
+.glyphs span{border:1px solid var(--term-line);border-radius:4px;text-align:center;padding:4px 0;color:#fff;cursor:default}
+.glyphs span:hover{border-color:var(--term-up);color:var(--term-up)}
+
+/* dev kit */
+.kit{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px}
+.kit>div{min-width:0}
+.kit pre{margin:0;max-height:300px;overflow:auto;background:#05070a;border:1px solid var(--term-line);border-radius:6px;padding:12px;font-size:12px;line-height:1.6}
+.lic{border:1px solid rgba(255,181,71,.35);background:rgba(255,181,71,.06);border-radius:6px;padding:12px;margin-top:12px;font-size:12px}
+.kit ul{padding-left:18px;margin:8px 0 14px;color:var(--term-muted)}
+
+/* sticky enterprise bar */
+.ent{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(11,15,20,.96);backdrop-filter:blur(8px);border-top:1px solid var(--term-up)}
+.ent .wrap{display:flex;align-items:center;gap:16px;padding-top:12px;padding-bottom:12px}
+.ent p{margin:0;flex:1;min-width:0}
+.ent strong{color:#fff}
+.ent .btn{white-space:nowrap}
+
+.toast{position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);background:var(--term-up);color:#04100b;font-weight:700;padding:8px 16px;border-radius:6px;opacity:0;pointer-events:none;transition:.25s;z-index:60}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+footer.f{color:var(--term-muted);font-size:12px;padding:32px 0 8px}
+
+@keyframes pulse{50%{opacity:.3}}
+@keyframes flash{from{background:rgba(255,255,255,.18)}to{background:transparent}}
+@keyframes slide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+@media (max-width:1000px){
+  .c4,.c5,.c7,.c8{grid-column:span 12}
+  .inputs{grid-template-columns:1fr 1fr}
+  .inputs .field:first-child,.inputs .field:last-child{grid-column:span 2}
+  .kit{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:700px){
+  .tx{grid-template-columns:64px 1fr 100px 100px}
+  .tx .m,.tx .f{display:none}
+  .top .hide-s{display:none}
+  .ent .wrap{flex-direction:column;align-items:stretch;gap:8px}
+  .ent .btn{justify-content:center}
+  body{padding-bottom:150px}
+  .toast{bottom:170px}
+  .gas-num{font-size:52px}
+  .stats{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <span class="brand">TECH<b>MONO</b></span>
+    <span class="pill hide-s"><i class="dot"></i>Mainnet (simulated)</span>
+    <span class="pill hide-s">Block <span id="blk">21,904,331</span></span>
+    <span class="spacer"></span>
+    <span class="pill sim">Demo data only</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Tech<span>Mono</span></h1>
+    <p>A monospace typeface built for the on-chain interface: order books, transaction logs, gas counters and code inspectors. Type your own wallet address or contract log below and watch it render live.</p>
+    <div class="cta">
+      <button class="btn primary" id="copyCfg" type="button">Copy Tailwind / CSS Config</button>
+      <a class="btn" id="dlTop" href="downloads/techmono-dev-assets.zip" download>Download Dev Assets (.zip)</a>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-try">
+    <header><h2 id="h-try">Try it</h2><span class="tag">Edit any field, everything below updates</span></header>
+    <div class="body inputs">
+      <div class="field" id="fWallet">
+        <label for="wallet">Wallet address</label>
+        <input id="wallet" spellcheck="false" autocomplete="off" value="0x71C7656EC7ab88b098defB751B7401B5f6d8976F">
+        <div class="hint muted" id="walletHint"></div>
+      </div>
+      <div class="field">
+        <label for="amount">Amount (ETH)</label>
+        <input id="amount" inputmode="decimal" value="2.5">
+        <div class="hint muted">&nbsp;</div>
+      </div>
+      <div class="field">
+        <label for="price">ETH price (USDC)</label>
+        <input id="price" inputmode="decimal" value="3214.50">
+        <div class="hint muted">Re-centers the order book</div>
+      </div>
+      <div class="field">
+        <label for="free">Any text</label>
+        <input id="free" spellcheck="false" autocomplete="off" value="swap(1000000000000000000, 0xa9059cbb)">
+        <div class="hint muted">Rendered in all weights below</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <!-- ORDER BOOK -->
+    <section class="panel c5" aria-labelledby="h-ob">
+      <header><h2 id="h-ob">Order book</h2><span class="tag">ETH/USDC</span></header>
+      <div class="ob-head"><span>Price</span><span style="text-align:right">Size (ETH)</span><span style="text-align:right">Total</span></div>
+      <div id="asks" role="table" aria-label="Asks"></div>
+      <div class="mid"><span class="px" id="midPx">0.00</span><span id="midChg"></span><span class="muted" style="margin-left:auto">Spread <span id="spread">0.00</span></span></div>
+      <div id="bids" role="table" aria-label="Bids"></div>
+      <div style="height:8px"></div>
+    </section>
+
+    <!-- TX LOG -->
+    <section class="panel c7" aria-labelledby="h-tx">
+      <header>
+        <h2 id="h-tx">Transaction log</h2>
+        <span class="stats"><span>Pending <b id="nP" class="warn">0</b></span><span>Confirmed <b id="nC" class="up">0</b></span><span>Failed <b id="nF" class="down">0</b></span></span>
+        <button class="btn sm" id="sendTx" type="button">Send test tx</button>
+      </header>
+      <div class="tx-wrap">
+        <div class="tx hd"><span>Time</span><span>Hash</span><span class="m">Method</span><span class="f">From</span><span style="text-align:right">Value</span><span>Status</span></div>
+        <div id="txs" aria-live="off"></div>
+      </div>
+      <div class="statusbar"><span>Rows tinted blue come from the wallet address above.</span></div>
+    </section>
+
+    <!-- GAS -->
+    <section class="panel c4" aria-labelledby="h-gas">
+      <header><h2 id="h-gas">Gas price</h2><span class="tag"><span class="lvl" id="lvl">normal</span></span></header>
+      <div class="body">
+        <div class="gas-num"><span id="gasNum">0.0</span><small>gwei</small></div>
+        <svg class="spark" id="spark" viewBox="0 0 300 72" preserveAspectRatio="none" role="img" aria-label="Gas price over the last 60 samples">
+          <path id="sparkFill" fill="rgba(46,230,166,.12)" stroke="none"></path>
+          <polyline id="sparkLine" fill="none" stroke="#2ee6a6" stroke-width="1.5" vector-effect="non-scaling-stroke"></polyline>
+        </svg>
+        <dl class="kv">
+          <dt>Base fee</dt><dd id="gBase">0.00 gwei</dd>
+          <dt>Priority tip</dt><dd id="gTip">0.00 gwei</dd>
+          <dt>Transfer, 21,000 gas</dt><dd id="gC1">0</dd>
+          <dt>Swap, 150,000 gas</dt><dd id="gC2">0</dd>
+          <dt>Contract deploy, 1.2M gas</dt><dd id="gC3">0</dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- CODE INSPECTOR -->
+    <section class="panel c8" aria-labelledby="h-code">
+      <header>
+        <h2 id="h-code">Code inspector</h2>
+        <div class="tabs" role="tablist" aria-label="Sample sources">
+          <button class="tab" role="tab" aria-selected="true" data-k="sol" type="button">Router.sol</button>
+          <button class="tab" role="tab" aria-selected="false" data-k="log" type="button">Transfer log</button>
+          <button class="tab" role="tab" aria-selected="false" data-k="cd" type="button">Calldata</button>
+        </div>
+        <span class="tag">Editable</span>
+      </header>
+      <div class="editor">
+        <div class="gutter" id="gutter" aria-hidden="true"></div>
+        <div class="code-area">
+          <pre id="hl" aria-hidden="true"></pre>
+          <textarea id="src" spellcheck="false" aria-label="Code editor, paste your own contract code or logs"></textarea>
+        </div>
+      </div>
+      <div class="statusbar">
+        <span>Ln <b id="sbLn">1</b>, Col <b id="sbCol">1</b></span>
+        <span><b id="sbLines">0</b> lines</span>
+        <span><b id="sbChars">0</b> chars</span>
+        <span><b id="sbAddr">0</b> addresses</span>
+        <span>Token: <span class="tok" id="sbTok">none</span></span>
+      </div>
+    </section>
+
+    <!-- WEIGHTS -->
+    <section class="panel c7" aria-labelledby="h-w">
+      <header><h2 id="h-w">Weights</h2><span class="tag">Light / Regular / Oblique / Bold</span></header>
+      <div class="body">
+        <div class="field" style="margin-bottom:14px">
+          <label for="size">Size: <span id="sizeOut">28</span>px</label>
+          <input type="range" id="size" min="12" max="64" value="28">
+        </div>
+        <div class="weights" id="weights">
+          <div class="wrow"><span class="lbl">Light 300</span><span class="smp" data-w="300" data-s="normal"></span></div>
+          <div class="wrow"><span class="lbl">Regular 400</span><span class="smp" data-w="400" data-s="normal"></span></div>
+          <div class="wrow"><span class="lbl">Oblique 400</span><span class="smp" data-w="400" data-s="italic"></span></div>
+          <div class="wrow"><span class="lbl">Bold 700</span><span class="smp" data-w="700" data-s="normal"></span></div>
+        </div>
+        <div class="balance" aria-live="polite">
+          <span class="muted" id="balAddr"></span>
+          <span class="big" id="balEth"></span>
+          <span class="muted" id="balUsd"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel c5" aria-labelledby="h-g">
+      <header><h2 id="h-g">Character set</h2><span class="tag" id="gCount"></span></header>
+      <div class="body"><div class="glyphs" id="glyphs"></div>
+        <p class="muted" style="margin:12px 0 0;font-size:12px">Latin-1 with extended Latin, currency (£ ¥ €), quotes and dashes. Arrows and block characters are drawn with CSS in this demo.</p>
+      </div>
+    </section>
+
+    <!-- DEV KIT -->
+    <section class="panel c12" aria-labelledby="h-kit" id="devkit">
+      <header><h2 id="h-kit">Dev kit</h2><span class="tag">Copy, inspect, or download</span></header>
+      <div class="body kit">
+        <div>
+          <pre id="cfgPre" tabindex="0" aria-label="Config preview"></pre>
+        </div>
+        <div>
+          <button class="btn primary" id="copyCfg2" type="button">Copy Tailwind / CSS Config</button>
+          <ul>
+            <li>@font-face rules for all four styles</li>
+            <li>Terminal color tokens used on this page</li>
+            <li>Tailwind v3 config and v4 @theme</li>
+          </ul>
+          <a class="btn" id="dlKit" href="downloads/techmono-dev-assets.zip" download>Download Dev Assets (.zip)</a>
+          <div class="lic"><strong>License:</strong> free for personal use and local prototyping. The .zip contains the web fonts and Tailwind snippets for that purpose only. Mainnet production, app embedding or global brand rights need an Enterprise License.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="f">TechMono specimen. All prices, transactions and gas figures on this page are generated in your browser for demonstration.</footer>
+</main>
+
+<div class="ent" role="region" aria-label="Enterprise licensing">
+  <div class="wrap">
+    <p><strong>Prototyping a Web3 Protocol or Mainnet dApp?</strong> <span class="muted">TechMono is free for personal use and local prototyping. For mainnet production, app embedding, or global brand rights, acquire an Enterprise License.</span></p>
+    <a class="btn primary" data-contact href="#">Get Enterprise License / Contact Sales</a>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+'use strict';
+/* ====== SET YOUR LICENSING FORM URL HERE ====== */
+const LICENSE_FORM_URL = '#';   /* e.g. 'https://forms.gle/xxxx' or your Tally/Typeform/Airtable link */
+/* ============================================== */
+const CONFIG_TEXT = "/* ===== CSS: paste into your stylesheet ===== */\n/* ---------- TechMono: web font setup ----------\n   Put the /fonts folder next to this file (or adjust the url() paths). */\n@font-face{font-family:\"TechMono\";font-weight:300;font-style:normal;font-display:swap;\n  src:url(\"./fonts/TechMono-Light.woff\") format(\"woff\"),url(\"./fonts/TechMono-Light.ttf\") format(\"truetype\")}\n@font-face{font-family:\"TechMono\";font-weight:400;font-style:normal;font-display:swap;\n  src:url(\"./fonts/TechMono-Regular.woff\") format(\"woff\"),url(\"./fonts/TechMono-Regular.ttf\") format(\"truetype\")}\n@font-face{font-family:\"TechMono\";font-weight:400;font-style:italic;font-display:swap;\n  src:url(\"./fonts/TechMono-Oblique.woff\") format(\"woff\"),url(\"./fonts/TechMono-Oblique.ttf\") format(\"truetype\")}\n@font-face{font-family:\"TechMono\";font-weight:700;font-style:normal;font-display:swap;\n  src:url(\"./fonts/TechMono-Bold.woff\") format(\"woff\"),url(\"./fonts/TechMono-Bold.ttf\") format(\"truetype\")}\n\n/* ---------- Terminal tokens used by the specimen ---------- */\n:root{\n  --font-techmono:\"TechMono\",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;\n  --term-bg:#06080b;      --term-panel:#0b0f14;  --term-line:#1b232d;\n  --term-text:#cdd6e0;    --term-muted:#7d8b9a;\n  --term-up:#2ee6a6;      --term-down:#ff5c74;   --term-warn:#ffb547;  --term-accent:#4cc9f0;\n  --term-size:13px;       --term-leading:1.55;\n}\n.font-techmono{font-family:var(--font-techmono)}\n.term{font-family:var(--font-techmono);font-size:var(--term-size);line-height:var(--term-leading);\n  color:var(--term-text);background:var(--term-bg);font-variant-numeric:tabular-nums}\n\n// ---------- Tailwind v3: tailwind.config.js ----------\nmodule.exports = {\n  theme: {\n    extend: {\n      fontFamily: {\n        techmono: ['TechMono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],\n      },\n      colors: {\n        term: {\n          bg: '#06080b', panel: '#0b0f14', line: '#1b232d',\n          text: '#cdd6e0', muted: '#7d8b9a',\n          up: '#2ee6a6', down: '#ff5c74', warn: '#ffb547', accent: '#4cc9f0',\n        },\n      },\n      fontSize: { term: ['13px', { lineHeight: '1.55' }] },\n    },\n  },\n};\n\n/* ---------- Tailwind v4: in your main CSS file ----------\n@import \"tailwindcss\";\n@theme {\n  --font-techmono: \"TechMono\", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;\n  --color-term-bg: #06080b;   --color-term-panel: #0b0f14;  --color-term-line: #1b232d;\n  --color-term-text: #cdd6e0; --color-term-muted: #7d8b9a;\n  --color-term-up: #2ee6a6;   --color-term-down: #ff5c74;\n  --color-term-warn: #ffb547; --color-term-accent: #4cc9f0;\n}\nUsage: <div class=\"font-techmono text-[13px] bg-term-bg text-term-text\">0x71C7...976F<\/div>\n*/\n";
+
+const $ = id => document.getElementById(id);
+const rnd = (a, b) => a + Math.random() * (b - a);
+const hex = n => Array.from({length: n}, () => '0123456789abcdef'[Math.random() * 16 | 0]).join('');
+const short = a => a.length > 12 ? a.slice(0, 6) + '…' + a.slice(-4) : a;
+const fmt = (n, d = 2) => n.toLocaleString('en-US', {minimumFractionDigits: d, maximumFractionDigits: d});
+const num = (v, fb) => { const n = parseFloat(String(v).replace(/,/g, '')); return Number.isFinite(n) && n >= 0 ? n : fb; };
+const ADDR_RE = /^0x[0-9a-fA-F]{40}$/;
+const state = {wallet: $('wallet').value, amount: 2.5, price: 3214.5};
+
+/* contact links */
+document.querySelectorAll('[data-contact]').forEach(a => {
+  a.href = LICENSE_FORM_URL;
+  if (LICENSE_FORM_URL !== '#') { a.target = '_blank'; a.rel = 'noopener'; }
+});
+
+/* toast + copy */
+let tt;
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 1800); }
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch (e) {
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); let ok = false;
+    try { ok = document.execCommand('copy'); } catch (_) {}
+    ta.remove(); return ok;
+  }
+}
+['copyCfg', 'copyCfg2'].forEach(id => $(id).addEventListener('click', async () => {
+  toast(await copyText(CONFIG_TEXT) ? 'Config copied to clipboard' : 'Copy failed, select the text manually');
+}));
+$('cfgPre').textContent = CONFIG_TEXT;
+['dlTop', 'dlKit'].forEach(id => $(id).addEventListener('click', () => toast('Downloading dev assets')));
+
+/* ====== inputs ====== */
+function onWallet() {
+  const v = $('wallet').value.trim(); state.wallet = v;
+  const f = $('fWallet'), h = $('walletHint');
+  if (!v) { f.classList.remove('bad'); h.textContent = 'Enter an address to highlight its transactions'; h.className = 'hint muted'; }
+  else if (ADDR_RE.test(v)) { f.classList.remove('bad'); h.textContent = 'Valid format, 20 bytes'; h.className = 'hint up'; }
+  else { f.classList.add('bad'); h.textContent = 'Expected 0x followed by 40 hex characters'; h.className = 'hint down'; }
+  renderTx(); renderTester();
+}
+$('wallet').addEventListener('input', onWallet);
+$('amount').addEventListener('input', () => { state.amount = num($('amount').value, 0); renderTester(); renderGasCosts(); });
+$('price').addEventListener('input', () => {
+  const p = num($('price').value, 0); if (p <= 0) return;
+  state.price = p; mid = p; seedBook(); renderBook(); renderTester(); renderGasCosts();
+});
+$('free').addEventListener('input', renderTester);
+$('size').addEventListener('input', renderTester);
+
+/* ====== order book ====== */
+const ROWS = 10;
+let mid = state.price, prevMid = mid, openMid = mid, asks = [], bids = [], flashAsk = new Set(), flashBid = new Set();
+const step = () => Math.max(0.01, +(mid * 0.00022).toFixed(2));
+function seedBook() {
+  asks = Array.from({length: ROWS}, () => rnd(0.2, 9)); bids = Array.from({length: ROWS}, () => rnd(0.2, 9));
+  openMid = mid; prevMid = mid;
+}
+function bookRows(sizes, side) {
+  const s = step(); let tot = 0;
+  const rows = sizes.map((sz, i) => { tot += sz; return {p: side === 'ask' ? mid + s * (i + 1) : mid - s * (i + 1), sz, tot}; });
+  return rows;
+}
+function renderBook() {
+  const a = bookRows(asks, 'ask'), b = bookRows(bids, 'bid');
+  const max = Math.max(a[a.length - 1].tot, b[b.length - 1].tot);
+  const row = (r, i, cls, fl) => `<div class="ob-row ${cls}${fl.has(i) ? ' fl' : ''}" style="--d:${(r.tot / max * 100).toFixed(1)}%"><span>${fmt(r.p)}</span><span>${fmt(r.sz, 3)}</span><span>${fmt(r.tot, 3)}</span></div>`;
+  $('asks').innerHTML = a.map((r, i) => row(r, i, 'ask', flashAsk)).reverse().join('');
+  $('bids').innerHTML = b.map((r, i) => row(r, i, 'bid', flashBid)).join('');
+  const chg = (mid - openMid) / openMid * 100, up = mid >= prevMid;
+  $('midPx').innerHTML = `<i class="tri ${up ? 'u' : 'd'}"></i>${fmt(mid)}`;
+  $('midPx').className = 'px ' + (up ? 'up' : 'down');
+  $('midChg').textContent = (chg >= 0 ? '+' : '') + chg.toFixed(3) + '%';
+  $('midChg').className = chg >= 0 ? 'up' : 'down';
+  $('spread').textContent = fmt(step() * 2);
+}
+function tickBook() {
+  prevMid = mid; mid = Math.max(0.01, mid + rnd(-1, 1) * step() * 1.4);
+  flashAsk = new Set(); flashBid = new Set();
+  for (let k = 0; k < 4; k++) {
+    const i = Math.random() * ROWS | 0;
+    if (Math.random() < .5) { asks[i] = Math.max(.05, asks[i] + rnd(-1.2, 1.4)); flashAsk.add(i); }
+    else { bids[i] = Math.max(.05, bids[i] + rnd(-1.2, 1.4)); flashBid.add(i); }
+  }
+  renderBook();
+}
+
+/* ====== tx log ====== */
+const METHODS = [['swap', () => fmt(rnd(.05, 8), 3) + ' ETH'], ['approve', () => '-'], ['transfer', () => fmt(rnd(20, 9000), 0) + ' USDC'],
+  ['addLiquidity', () => fmt(rnd(.5, 25), 2) + ' ETH'], ['stake', () => fmt(rnd(1, 64), 0) + ' ETH'], ['bridge', () => fmt(rnd(.1, 12), 2) + ' ETH'], ['mint', () => fmt(rnd(.01, .2), 3) + ' ETH']];
+const txs = []; let blockNo = 21904331;
+const clock = d => d.toTimeString().slice(0, 8);
+function makeTx(over = {}, status = 'pending') {
+  const m = METHODS[Math.random() * METHODS.length | 0];
+  const t = {id: Math.random(), time: clock(new Date()), hash: '0x' + hex(64), method: m[0], from: '0x' + hex(40), value: m[1](), status, fresh: true, ...over};
+  if (status === 'confirmed') t.block = blockNo;
+  txs.unshift(t); if (txs.length > 60) txs.pop();
+  if (status === 'pending') setTimeout(() => settle(t), rnd(2200, 5200));
+  return t;
+}
+function settle(t) {
+  const r = Math.random(); t.status = r < .88 ? 'confirmed' : r < .95 ? 'failed' : 'replaced'; t.fresh = false; renderTx();
+}
+const isMine = t => state.wallet && t.from.toLowerCase() === state.wallet.toLowerCase();
+function renderTx() {
+  $('txs').innerHTML = txs.slice(0, 18).map(t => `<div class="tx${t.fresh ? ' new' : ''}${isMine(t) ? ' mine' : ''}"><span class="muted">${t.time}</span><span>${short(t.hash)}</span><span class="m">${t.method}</span><span class="f">${short(t.from)}</span><span class="v">${t.value}</span><span class="st st-${t.status}"><i></i>${t.status.toUpperCase()}</span></div>`).join('');
+  txs.forEach(t => t.fresh = false);
+  const c = s => txs.filter(t => t.status === s).length;
+  $('nP').textContent = c('pending'); $('nC').textContent = c('confirmed'); $('nF').textContent = c('failed');
+}
+for (let i = 0; i < 12; i++) { const t = makeTx({time: clock(new Date(Date.now() - (12 - i) * 7000))}, Math.random() < .85 ? 'confirmed' : 'failed'); t.fresh = false; }
+$('sendTx').addEventListener('click', () => {
+  if (!ADDR_RE.test(state.wallet)) { toast('Enter a valid wallet address first'); $('wallet').focus(); return; }
+  makeTx({from: state.wallet, method: 'swap', value: fmt(state.amount, 3) + ' ETH'}); renderTx();
+});
+function tickTx() { if (Math.random() < .8) { makeTx(); renderTx(); } }
+
+/* block counter */
+setInterval(() => { blockNo++; $('blk').textContent = blockNo.toLocaleString('en-US'); }, 12000);
+
+/* ====== gas ====== */
+let gas = 18.4, gasShown = gas; const hist = [];
+for (let i = 0; i < 60; i++) { gas = Math.max(6, gas + (22 - gas) * .06 + rnd(-1.6, 1.6)); hist.push(gas); }
+function renderGasCosts() {
+  const c = g => { const eth = g * gas * 1e-9; return `${eth.toFixed(5)} ETH / $${fmt(eth * state.price)}`; };
+  $('gC1').textContent = c(21000); $('gC2').textContent = c(150000); $('gC3').textContent = c(1200000);
+}
+function renderGas() {
+  const from = gasShown, to = gas, t0 = performance.now();
+  const anim = now => {
+    const k = Math.min(1, (now - t0) / 500); gasShown = from + (to - from) * k;
+    $('gasNum').textContent = gasShown.toFixed(1);
+    if (k < 1) requestAnimationFrame(anim);
+  };
+  requestAnimationFrame(anim);
+  const lo = Math.min(...hist), hi = Math.max(...hist), span = Math.max(1, hi - lo);
+  const pts = hist.map((v, i) => [i / (hist.length - 1) * 300, 68 - (v - lo) / span * 62]);
+  $('sparkLine').setAttribute('points', pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '));
+  $('sparkFill').setAttribute('d', 'M0,72 L' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L') + ' L300,72 Z');
+  const tip = Math.max(.1, gas * .12);
+  $('gBase').textContent = fmt(gas - tip) + ' gwei'; $('gTip').textContent = fmt(tip) + ' gwei';
+  const l = $('lvl'), lv = gas < 15 ? ['low', 'up'] : gas < 40 ? ['normal', 'warn'] : ['high', 'down'];
+  l.textContent = lv[0]; l.className = 'lvl ' + lv[1];
+  renderGasCosts();
+}
+function tickGas() {
+  gas = Math.min(140, Math.max(6, gas + (22 - gas) * .05 + rnd(-2.2, 2.2) + (Math.random() < .06 ? rnd(8, 30) : 0)));
+  hist.push(gas); hist.shift(); renderGas();
+}
+
+/* ====== code inspector ====== */
+const SAMPLES = {
+sol: `// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+contract Router {
+    address public immutable owner;
+    mapping(address => uint256) public balances;
+
+    event Swap(address indexed from, uint256 amountIn, uint256 amountOut);
+
+    constructor() { owner = msg.sender; }
+
+    function swap(uint256 amountIn, uint256 minOut) external returns (uint256 out) {
+        require(balances[msg.sender] >= amountIn, "INSUFFICIENT_BALANCE");
+        out = (amountIn * 997) / 1000;
+        require(out >= minOut, "SLIPPAGE");
+        balances[msg.sender] -= amountIn;
+        emit Swap(msg.sender, amountIn, out);
+    }
+}
+`,
+log: `{
+  "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "topics": [
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+    "0x00000000000000000000000071c7656ec7ab88b098defb751b7401b5f6d8976f",
+    "0x000000000000000000000000d8da6bf26964af9d7eed9e03e53415d37aa96045"
+  ],
+  "data": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000",
+  "blockNumber": 21904331,
+  "transactionHash": "0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060",
+  "logIndex": 14,
+  "removed": false
+}
+`,
+cd: `// transfer(address,uint256)
+selector  0xa9059cbb
+to        0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+amount    1000000000000000000   // 1.0 token, 18 decimals
+
+// full calldata
+0xa9059cbb00000000000000000000000071c7656ec7ab88b098defb751b7401b5f6d8976f0000000000000000000000000000000000000000000000000de0b6b3a7640000
+`};
+const KW = 'pragma|solidity|contract|function|event|emit|external|public|private|internal|view|pure|returns|return|require|revert|uint256|uint8|uint|address|mapping|bytes32|bytes|memory|calldata|payable|if|else|import|is|constant|immutable|constructor|indexed|bool|string|msg|true|false|null';
+const TOK_RE = new RegExp('(\\/\\/[^\\n]*)|("(?:[^"\\\\\\n]|\\\\.)*")|(\\b0x[0-9a-fA-F]+\\b)|(\\b(?:' + KW + ')\\b)|(\\b\\d[\\d_.]*\\b)', 'g');
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function highlight(src) {
+  let out = '', last = 0, m; TOK_RE.lastIndex = 0;
+  while ((m = TOK_RE.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    const cls = m[1] ? 't-com' : m[2] ? (/^"0x[0-9a-fA-F]+"$/.test(m[2]) ? 't-hex' : 't-str') : m[3] ? 't-hex' : m[4] ? 't-kw' : 't-num';
+    out += `<span class="${cls}">${esc(m[0])}</span>`; last = m.index + m[0].length;
+    if (m[0].length === 0) TOK_RE.lastIndex++;
+  }
+  return out + esc(src.slice(last)) + ' ';
+}
+const srcEl = $('src');
+function describe(w) {
+  if (!w) return 'none';
+  if (/^0x[0-9a-fA-F]{40}$/.test(w)) return 'address, 20 bytes';
+  if (/^0x[0-9a-fA-F]{64}$/.test(w)) return 'bytes32 / hash, 32 bytes';
+  if (/^0x[0-9a-fA-F]{8}$/.test(w)) return 'function selector, 4 bytes';
+  if (/^0x[0-9a-fA-F]+$/.test(w)) return `hex data, ${Math.ceil((w.length - 2) / 2)} bytes`;
+  if (/^\d+$/.test(w)) { try { const b = BigInt(w); return `uint, 0x${b.toString(16)}` + (b >= 10n ** 15n ? `, ${(Number(b) / 1e18).toString()} at 18 decimals` : ''); } catch (e) {} }
+  return w.length > 28 ? w.slice(0, 26) + '…' : w;
+}
+function inspectCaret() {
+  const v = srcEl.value, p = srcEl.selectionStart, before = v.slice(0, p).split('\n');
+  $('sbLn').textContent = before.length; $('sbCol').textContent = before[before.length - 1].length + 1;
+  let s = p, e = p; const isW = c => /[0-9A-Za-z_$]/.test(c || '');
+  while (s > 0 && isW(v[s - 1])) s--; while (e < v.length && isW(v[e])) e++;
+  $('sbTok').textContent = describe(v.slice(s, e));
+}
+function renderCode() {
+  const v = srcEl.value, lines = v.split('\n').length;
+  $('hl').innerHTML = highlight(v);
+  $('gutter').textContent = Array.from({length: lines}, (_, i) => i + 1).join('\n');
+  $('sbLines').textContent = lines; $('sbChars').textContent = v.length;
+  $('sbAddr').textContent = (v.match(/\b0x[0-9a-fA-F]{40}\b/g) || []).length;
+  syncScroll(); inspectCaret();
+}
+function syncScroll() { $('hl').scrollTop = srcEl.scrollTop; $('hl').scrollLeft = srcEl.scrollLeft; $('gutter').scrollTop = srcEl.scrollTop; }
+srcEl.addEventListener('input', renderCode);
+srcEl.addEventListener('scroll', syncScroll);
+['keyup', 'click', 'select'].forEach(ev => srcEl.addEventListener(ev, inspectCaret));
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === b));
+  srcEl.value = SAMPLES[b.dataset.k]; renderCode();
+}));
+srcEl.value = SAMPLES.sol;
+
+/* ====== tester + glyphs ====== */
+function renderTester() {
+  const txt = $('free').value || state.wallet || 'TechMono', size = $('size').value;
+  $('sizeOut').textContent = size;
+  document.querySelectorAll('.smp').forEach(el => { el.textContent = txt; el.style.fontWeight = el.dataset.w; el.style.fontStyle = el.dataset.s; el.style.fontSize = size + 'px'; });
+  const addr = ADDR_RE.test(state.wallet) ? state.wallet : (state.wallet || 'no wallet entered');
+  $('balAddr').textContent = addr;
+  $('balEth').textContent = fmt(state.amount, 4) + ' ETH';
+  $('balUsd').textContent = '= $' + fmt(state.amount * state.price) + ' USDC at ' + fmt(state.price) + ' per ETH';
+}
+(function glyphs() {
+  const chars = [];
+  for (let c = 33; c < 127; c++) chars.push(String.fromCharCode(c));
+  chars.push(...'¡¢£¥§©®°×ßéñüŒœ€–—‘’“”•…');
+  $('glyphs').innerHTML = chars.map(c => `<span>${esc(c)}</span>`).join('');
+  $('gCount').textContent = chars.length + ' shown';
+})();
+
+/* ====== boot ====== */
+seedBook(); renderBook(); renderTx(); renderGas(); renderCode(); onWallet(); renderTester();
+setInterval(tickBook, 900); setInterval(tickTx, 1800); setInterval(tickGas, 1500);
+</script>
+</body>
+</html>
